@@ -39,9 +39,19 @@ router.get("/:id", (req, res) => {
 })
 
 // // [POST] /api/actions
-// router.post("/", async (req, res ,next) => {
+router.post("/", async (req, res ,next) => {
+    try{
+        const newAction = await Actions.insert(req.body)
+        console.log(newAction)
+        res.status(201).json(newAction)
 
-// })
+    } catch(error) {
+        next( { 
+            status: 400, 
+            message: "Provide the following: project_id, description, and notes" 
+        } )
+    }
+})
 
 
 // // [PUT] /api/actions/:id
