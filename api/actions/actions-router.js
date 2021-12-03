@@ -21,9 +21,22 @@ router.get('/', async (req, res, next) => {
 })
 
 // // [GET] /api/actions/:id
-// router.get("/:id", validateActionId, async (req, res, next) => {
+router.get("/:id", (req, res) => {
+    const { id } = req.params
+    Actions.get(id)
+        .then(action => {
+            if (!action) {
+                res.status(404).json( { message: "The Action ID does not exist" } )
 
-// })
+            } else {
+                res.status(200).json(action)
+            }
+
+        }).catch(error => {
+            console.log(error)
+            res.status(500).json( { message: 'Error retrieving action' } )
+        })
+})
 
 // // [POST] /api/actions
 // router.post("/", async (req, res ,next) => {
