@@ -10,17 +10,16 @@ const { validateProjectId, validateProject } = require("./projects-middleware");
 router.get("/", async ( req, res ) => {
     try{
         const projects = await Projects.get();
-        res.status(400).json(projects);
+        res.status(200).json(projects);
     }
-    catch(err){
-        res.status(500).json({
-            message: "There was an issue accessing the server with your information"
-        })
+    catch(error){
+        res.status(500).json( { message: "The project's information can not be retrieved" } )
+        console.log(error);
     }
 })
 
 // [GET] /api/projects/:id
-router.get("/:id/", async ( req, res, next ) => {
+router.get("/:id/", validateProjectId, async ( req, res, next ) => {
     const { id } = req.params
     try {
         const project = await Projects.get(Number(id))
@@ -37,7 +36,19 @@ router.get("/:id/", async ( req, res, next ) => {
 })
 
 // [POST] /api/projects
+router.post("/", ( req, res ) => {
+    const newProject = req.body;
+    Projects.insert(newProject)
+        .then(() => {
+            res.status(201).json(newProject);
 
+        }).catch(error => {
+            res.status(400).json( { 
+                message: "Error adding project",
+                error: error.message
+             } )
+        })
+})
 
 
 // [PUT] /api/projects/:id
@@ -49,3 +60,5 @@ router.get("/:id/", async ( req, res, next ) => {
 
 
 // [GET] /api/projects/:id/actions
+
+module.exports = router;
