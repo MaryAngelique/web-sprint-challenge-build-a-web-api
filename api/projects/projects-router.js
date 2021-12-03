@@ -52,7 +52,24 @@ router.post("/", ( req, res ) => {
 
 
 // [PUT] /api/projects/:id
+router.put("/:id", validateProjectId, validateProject, (req,res, next) => {
+    if(req.body.completed === undefined){
+        next( { 
+            status: 400, 
+            message: "The project ID does not exist" 
+        } )
 
+    } else{
+        Projects.update(req.params.id, req.body)
+            .then(() => {
+                return Projects.get(req.params.id)
+
+            }).then(project => {
+                res.json(project)
+
+            }).catch(next)
+    }
+})
 
 
 // DELETE] /api/projects/:id
