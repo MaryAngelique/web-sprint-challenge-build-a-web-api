@@ -4,7 +4,7 @@ const router = express.Router();
 
 const Actions = require("./actions-model");
 
-// const { validateActionId, validateAction } = require("./actions-middleware");
+const { validateActionId, validateAction } = require("./actions-middleware");
 
 // [GET] /api/actions
 router.get('/', async (req, res, next) => {
@@ -54,15 +54,27 @@ router.post("/", async (req, res ,next) => {
 })
 
 
-// // [PUT] /api/actions/:id
-// router.put("/:id", validateActionId, validateAction, async (req, res,) => {
-
-// })
-
+// [PUT] /api/actions/:id
+router.put("/:id", validateActionId, validateAction, async (req, res,) => {
+    console.log(req.params.id)
+    const updatedAction = await Actions.update(req.params.id, {
+        project_id: req.project_id,
+        description: req.description,
+        notes: req.notes,
+        completed: req.completed
+        })
+    res.status(200).json(updatedAction)
+})
 
 // // [DELETE] /api/actions/:id
-// router.delete("/:id", validateActionId, async (req, res, next) => {
-
-// })
+router.delete('/:id', validateActionId, async (req, res, next) => {
+    try {
+        await Actions.remove(req.params.id)
+        res.json(req.actions)
+    }
+    catch (error) {
+        next(error)
+    }
+})
 
 module.exports = router;
