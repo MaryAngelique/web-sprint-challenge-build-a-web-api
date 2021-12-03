@@ -75,8 +75,8 @@ router.put("/:id", validateProjectId, validateProject, (req,res, next) => {
 // DELETE] /api/projects/:id
 router.delete("/:id", validateProjectId, async (req, res, next) => {
     try{
-        await Projects.remove(req.params.id)
-        res.json(res.Projects)
+        await Projects.remove(req.params.id);
+        res.json(res.Projects);
 
     } catch (error) {
         next(error);
@@ -85,5 +85,17 @@ router.delete("/:id", validateProjectId, async (req, res, next) => {
 
 
 // [GET] /api/projects/:id/actions
+router.get("/:id/actions", validateProjectId, async (req, res, next) => {
+    Projects.getProjectActions(req.params.id)
+        .then(actions => {
+            if(actions.length > 0){
+                res.status(200).json(actions)
+            } else {
+                res.status(404).json((actions))
+            }
+            
+        }).catch(next)
+})
+
 
 module.exports = router;
